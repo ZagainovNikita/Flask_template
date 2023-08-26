@@ -105,9 +105,10 @@ input {
 
 .err{
     position: relative;
-    right: 60%;
-    float: right;
+    left: 20%;
+    float: left;
     font-size: 25px;
+    width: 60%;
 }
 a {
     color: blue;
