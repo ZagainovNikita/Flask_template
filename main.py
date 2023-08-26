@@ -41,8 +41,9 @@ def profile(username):
 
 @app.errorhandler(404)
 def page404(error):
-    return render_template('error_page.html', TITLE = error, menu = main_menu), 404
-
+    return render_template('error_page.html', TITLE=error, menu=main_menu), 404
+  
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
+
 
