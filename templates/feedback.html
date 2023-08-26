@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block main_menu %}
+{{ super() }}
+{% endblock %}
+{% block custom_content %}
+<form action="/feedback" method="post">
+    <p><label>Name:</label><input type="text" name="username" value="" required/>
+    <p><label>Email:</label><input type="text" name="email" value="" required/>
+    <p><label>Message:</label>
+    <p><textarea name="message" rows=7, cols=40></textarea>
+    <p><input type="submit" value="Send">
+</form>
+{% for category, msg in get_flashed_messages(True) %}
+</p><div class="flash {{category}}">{{ msg }}</div>
+{% endfor %}
+{% endblock %}

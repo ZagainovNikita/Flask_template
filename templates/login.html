@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block main_menu %}
+{{ super() }}
+{% endblock %}
+{% block custom_content %}
+<form action="/login" method="post">
+    <p><label>Login:</label><input type="text" name="username" value="" required/>
+    <p><label>Password:</label><input type="text" name="password" value="" required/>
+    <p><input type="submit" value="Login">
+</form>
+{% endblock %}

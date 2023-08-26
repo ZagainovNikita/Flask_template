@@ -1,0 +1,106 @@
+body {
+    color: #b0b0b0;
+    background-color: #402b0f;
+}
+
+.title {
+  background: #f29b22;
+  padding: 50px 20px;
+  text-align: center;
+  border: 2px solid #ad6500;
+}
+.title h1 {
+  font-weight: normal;
+  font-family: 'Merriweather', serif;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  line-height: 1;
+  color: #5c4f3d;
+  font-size: 40px;
+  padding: .4em 1em .55em;
+}
+.title h1:before,
+.title h1:after {
+  content: "";
+  position: absolute;
+  width: 60%;
+  height: .1em;
+  background: #294200;
+}
+.title h1:before {
+  left: 0;
+  top: 0;
+}
+.title h1:after {
+  right: 0;
+  bottom: 0;
+}
+.title h1 span:before,
+.title h1 span:after {
+  content: "";
+  position: absolute;
+  width: .65em;
+  height: .65em;
+  border: .1em solid #294200;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.title h1 span:before {
+  top: -.55em;
+  left: -.325em;
+}
+.title h1 span:after {
+  bottom: -.55em;
+  right: -.325em;
+}
+
+nav {
+  display: block;
+  width: auto;
+  margin: 5px auto 5px;
+  background: #8a5711;
+  border: 2px solid #ad6500;
+  height: 50px;
+}
+.main_menu ul {
+  padding: 0;
+  position: relative;
+  left:50%;
+  float:left;
+}
+.main_menu a {
+  padding: 1em;
+  background: rgba(230, 153, 48, .9);
+  border-right: 1px solid #111111;
+  color: #695753;
+}
+.main_menu a:hover {
+background: #ff9300;
+}
+.main_menu li {
+  display: inline;
+  position: relative;
+  left:-50%;
+  float:left;
+  margin: 0 5px;
+}
+.textblock{
+    position: relative;
+    left: 10%;
+    float: left;
+    width: 80%;
+}
+form {
+    position: relative;
+    left: 15%;
+    float: left;
+    width: 70%;
+}
+input {
+    position: relative;
+    right: 60%;
+    float: right;
+
+
+}

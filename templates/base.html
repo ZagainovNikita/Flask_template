@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link type="text/css"
+          href="{{ url_for('static', filename='css/styles.css') }}"
+          rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>{{ TITLE }}</title>
+</head>
+<body>
+{% block title %}
+<div class="title"><h1><span>Flask WebApp</span></h1></div>
+{% endblock %}
+
+{% block main_menu %}
+<nav class="main_menu">
+  <ul>
+    {% for item in menu %}
+    <li><a href="{{ item['url'] }}">{{ item['name'] }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endblock %}
+
+{% block custom_content %}
+
+{% endblock %}
+</body>
+</html>
