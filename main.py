@@ -2,32 +2,19 @@ from flask import Flask, request, url_for, \
     render_template, flash, get_flashed_messages, \
     session, redirect, abort, g
 from config import main_menu, DATABASE, DEBUG, SECRET_KEY
-from database import DB
+from database import connect_db, create_db, get_db
 import sqlite3 as sql
 import os
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
+db_path = app.config['DATABASE']
 
-def connect_db():
-    conn = sql.connect(app.config['DATABASE'])
-    conn.row_factory = sql.Row
-    return conn
-def create_db():
-    db = connect_db()
-    db.cursor().execute('''CREATE TABLE IF NOT EXISTS data(
-    id INT,
-    value FLOAT
-    );''')
-def get_db():
-    if not hasattr(g, 'link_db'):
-        g.link_db = connect_db()
-    return g.link_db
 
 @app.route('/')
 def main_page():
-    db_temp = get_db()
+    db_temp = get_db(db_path)
     return render_template('index.html', TITLE = 'Flask WebApp', menu = main_menu)
 
 @app.route('/feedback', methods = ['POST', 'GET'])
