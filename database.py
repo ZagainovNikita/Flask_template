@@ -14,3 +14,10 @@ def get_db(path):
     if not hasattr(g, 'link_db'):
         g.link_db = connect_db(path)
     return g.link_db
+
+class DataBase:
+    def __init__(self, connection):
+        self.conn = connection
+        self.cur = connection.cursor()
+    def fetchall(self, db_name):
+        return self.cur.execute(f"""SELECT * FROM {db_name}""").fetchall()
