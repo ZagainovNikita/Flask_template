@@ -1,8 +1,8 @@
 from flask import Flask, request, url_for, \
     render_template, flash, get_flashed_messages, \
     session, redirect, abort, g
-from config import main_menu, DATABASE, DEBUG, SECRET_KEY
-from database import connect_db, create_db, get_db
+from config import DATABASE, DEBUG, SECRET_KEY
+from database import DataBase
 import sqlite3 as sql
 import os
 
@@ -10,12 +10,12 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
 db_path = app.config['DATABASE']
-
-
+db = DataBase(db_path)
+main_menu = db.get_main_menu()
 @app.route('/')
 def main_page():
-    db_temp = get_db(db_path)
-    return render_template('index.html', TITLE = 'Flask WebApp', menu = main_menu)
+    db_temp = db.get_db()
+    return render_template('index.html', TITLE='Flask WebApp', menu=main_menu)
 
 @app.route('/feedback', methods = ['POST', 'GET'])
 def contact_page():
@@ -48,7 +48,7 @@ def page404(error):
     return render_template('error_page.html', TITLE=error, menu=main_menu), 404
 
 @app.teardown_appcontext
-def closr_db(error):
+def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
 
