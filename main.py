@@ -1,14 +1,17 @@
 from flask import Flask, request, url_for, \
     render_template, flash, get_flashed_messages, \
     session, redirect, abort
+from config import main_menu, DATABASE, DEBUG, SECRET_KEY
+from database import DB
+import psycopg2 as sql
+import os
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret_key_sample'
-main_menu = [
-    {'name': 'Main page', 'url': '/'},
-    {'name': 'Downloads', 'url': '/downloads'},
-    {'name': 'Contact us', 'url': '/feedback'},
-    {'name': 'Sign in', 'url': '/login'}
-]
+app.config.from_object(__name__)
+app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
+
+db = DB(app.config['DATABASE'])
+
 @app.route('/')
 def main_page():
     return render_template('index.html', TITLE = 'Flask WebApp', menu = main_menu)
