@@ -1,19 +1,33 @@
 from flask import Flask, request, url_for, \
     render_template, flash, get_flashed_messages, \
-    session, redirect, abort
+    session, redirect, abort, g
 from config import main_menu, DATABASE, DEBUG, SECRET_KEY
 from database import DB
-import psycopg2 as sql
+import sqlite3 as sql
 import os
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
 
-db = DB(app.config['DATABASE'])
+def connect_db():
+    conn = sql.connect(app.config['DATABASE'])
+    conn.row_factory = sql.Row
+    return conn
+def create_db():
+    db = connect_db()
+    db.cursor().execute('''CREATE TABLE IF NOT EXISTS data(
+    id INT,
+    value FLOAT
+    );''')
+def get_db():
+    if not hasattr(g, 'link_db'):
+        g.link_db = connect_db()
+    return g.link_db
 
 @app.route('/')
 def main_page():
+    db_temp = get_db()
     return render_template('index.html', TITLE = 'Flask WebApp', menu = main_menu)
 
 @app.route('/feedback', methods = ['POST', 'GET'])
@@ -45,7 +59,13 @@ def profile(username):
 @app.errorhandler(404)
 def page404(error):
     return render_template('error_page.html', TITLE=error, menu=main_menu), 404
-  
+
+@app.teardown_appcontext
+def closr_db(error):
+    if hasattr(g, 'link_db'):
+        g.link_db.close()
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
