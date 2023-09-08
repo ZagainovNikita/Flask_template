@@ -10,7 +10,8 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
 db_path = app.config['DATABASE']
-db = DataBase(db_path)
+db_conn = sql.connect(db_path)
+db = DataBase(db_conn)
 main_menu = db.get_main_menu()
 @app.route('/')
 def main_page():
@@ -25,7 +26,7 @@ def contact_page():
             flash('Thanks for your message!', category='success')
         else:
             flash('Invalid login', category='error')
-    return render_template('feedback.html', TITLE = 'Contact us', menu = main_menu)
+    return render_template('feedback.html', TITLE='Contact us', menu=main_menu)
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login_page():
@@ -35,13 +36,25 @@ def login_page():
         if request.form['username'] == 'Nikita' and request.form['password'] == 'A120':
             session['userLogged'] = request.form['username']
             return redirect(url_for('profile', username=session['userLogged']))
-    return render_template('login.html', TITLE = 'Sign in', menu = main_menu)
+    return render_template('login.html', TITLE='Sign in', menu=main_menu)
 
 @app.route('/profile/<username>')
 def profile(username):
     if session.get('userLogged') != username:
         abort(401)
     return f'profile page of {username}'
+
+@app.route('/add_post', methods = ['GET', 'POST'])
+def add_post():
+    db_temp = db.get_db()
+    db_posts = DataBase(db)
+    if request.method == 'POST':
+        if len(request.form['title']) > 2 and len(request.form['text']) > 10:
+            db_posts.add_post(request.form['title'], request.form['text'])
+            flash(message='Thanks for your post!', category='success')
+        else:
+            flash(message='Invalid format of post', category='error')
+    return render_template('add_post.html', TITLE='Add a post', menu=main_menu)
 
 @app.errorhandler(404)
 def page404(error):

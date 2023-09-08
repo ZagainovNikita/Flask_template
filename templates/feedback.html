@@ -11,6 +11,6 @@
     <p><input type="submit" value="Send">
 </form>
 {% for category, msg in get_flashed_messages(True) %}
-</p><div class="flash {{category}}">{{ msg }}</div>
+<p><div class="flash {{category}}">{{ msg }}</div>
 {% endfor %}
 {% endblock %}

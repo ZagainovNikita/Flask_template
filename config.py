@@ -4,7 +4,7 @@ SECRET_KEY = 'secret_key_sample'
 
 main_menu = [
     {'title': 'Main page', 'url': '/'},
-    {'title': 'Downloads', 'url': '/downloads'},
+    {'title': 'Add a post', 'url': '/add_post'},
     {'title': 'Contact us', 'url': '/feedback'},
     {'title': 'Sign in', 'url': '/login'}
 ]
