@@ -55,7 +55,7 @@ class DataBase:
         INSERT INTO posts(id, title, text, time) VALUES(?, ?, ?, ?)
         """, (id, title, text, time))
         self.conn.commit()
-    def get_db(self):
+    def get_db(self, path):
         if not hasattr(g, 'link_db'):
-            g.link_db = sql.connect(self.path)
+            g.link_db = sql.connect(path)
         return g.link_db

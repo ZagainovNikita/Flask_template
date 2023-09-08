@@ -15,7 +15,7 @@ db = DataBase(db_conn)
 main_menu = db.get_main_menu()
 @app.route('/')
 def main_page():
-    db_temp = db.get_db()
+    db_temp = db.get_db(db_path)
     return render_template('index.html', TITLE='Flask WebApp', menu=main_menu)
 
 @app.route('/feedback', methods = ['POST', 'GET'])
@@ -46,7 +46,7 @@ def profile(username):
 
 @app.route('/add_post', methods = ['GET', 'POST'])
 def add_post():
-    db_temp = db.get_db()
+    db_temp = db.get_db(db_path)
     db_posts = DataBase(db)
     if request.method == 'POST':
         if len(request.form['title']) > 2 and len(request.form['text']) > 10:
