@@ -11,6 +11,7 @@ sqlScripts = {
     'add_post': 'INSERT INTO posts(id, title, text, time) VALUES(?, ?, ?, ?)'
 }
 def execute_script(db, script, values = None, fetchone = False, fetchall = False):
+    db.row_factory = sql.Row
     cur = db.cursor()
     if values != None:
         cur.execute(script, values)
