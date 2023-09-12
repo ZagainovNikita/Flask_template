@@ -3,7 +3,7 @@
 <form action="/add_post" method="post">
     <p><label>Title:</label><input type="text" name="title" value="" required/>
     <p><label>Contents:</label>
-    <p><textarea name="text" rows=20, cols=50></textarea>
+    <p><textarea name="text" rows=20, cols=60></textarea>
     <p><input type="submit" value="Send">
 </form>
 {% for category, msg in get_flashed_messages(True) %}
