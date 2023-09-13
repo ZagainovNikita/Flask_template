@@ -14,7 +14,9 @@ db_path = app.config['DATABASE']
 
 @app.route('/')
 def main_page():
-    return render_template('index.html', TITLE='Flask WebApp', menu=main_menu)
+    db_temp = sql.connect(db_path)
+    posts = execute_script(db_temp, sqlScripts['get_all_posts'], fetchall=True)
+    return render_template('index.html', TITLE='Flask WebApp', menu=main_menu, posts=posts)
 
 @app.route('/feedback', methods = ['POST', 'GET'])
 def contact_page():
@@ -60,6 +62,19 @@ def add_post():
             flash(message='Invalid format of post', category='error')
     return render_template('add_post.html', TITLE='Add a post', menu=main_menu)
 
+
+@app.route('/post/id<int:post_id>')
+def post_page(post_id):
+    db_temp = get_db(db_path)
+    try:
+        data = execute_script(db_temp, sqlScripts['get_post'], values=(post_id,), fetchone=True)
+        post_title = data['title']
+        post_text = data['text']
+        return render_template('post.html', TITLE=f'Post {post_id}', menu=main_menu,
+                               post_title=post_title, post_text=post_text)
+    except:
+        abort(404)
+
 @app.errorhandler(404)
 def page404(error):
     return render_template('error_page.html', TITLE=error, menu=main_menu), 404
@@ -68,6 +83,7 @@ def page404(error):
 def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
+
 
 
 if __name__ == '__main__':

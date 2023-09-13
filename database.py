@@ -8,7 +8,9 @@ def get_db(db_path):
 
 sqlScripts = {
     'last_id': 'SELECT * FROM posts WHERE id=(SELECT max(id) FROM posts)',
-    'add_post': 'INSERT INTO posts(id, title, text, time) VALUES(?, ?, ?, ?)'
+    'add_post': 'INSERT INTO posts(id, title, text, time) VALUES(?, ?, ?, ?)',
+    'get_post': 'SELECT * FROM posts WHERE id = ?',
+    'get_all_posts': 'SELECT * FROM posts ORDER BY id DESC'
 }
 def execute_script(db, script, values = None, fetchone = False, fetchall = False):
     db.row_factory = sql.Row

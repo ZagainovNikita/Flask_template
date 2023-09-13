@@ -16,4 +16,10 @@
     Applications that use the Flask
     framework include Pinterest and LinkedIn.
 </div>
+<p><p>
+<div class="textblock">
+    {% for post in posts %}
+    <a href="post/id{{ post['id'] }}">{{ post['title'] }}</a>
+    {% endfor %}
+</div>
 {% endblock %}
