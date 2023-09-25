@@ -87,5 +87,6 @@ def close_db(error):
 
 
 if __name__ == '__main__':
+    print('running')
     app.run(debug=True)
 
