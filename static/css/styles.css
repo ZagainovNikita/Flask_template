@@ -9,6 +9,11 @@ body {
   text-align: center;
   border: 2px solid #ad6500;
 }
+
+a.link {
+    color: rgb(255, 255, 255);
+}
+
 .title h1 {
   font-weight: normal;
   font-family: 'Merriweather', serif;
