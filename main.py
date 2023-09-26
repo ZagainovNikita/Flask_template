@@ -2,10 +2,10 @@ from flask import Flask, request, url_for, \
     render_template, flash, get_flashed_messages, \
     session, redirect, abort, g
 from config import DATABASE, DEBUG, SECRET_KEY, main_menu
-from database import get_db, sqlScripts, execute_script
+from database import get_db, DataBase
 import sqlite3 as sql
 import os
-from datetime import datetime
+import time
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -14,9 +14,11 @@ db_path = app.config['DATABASE']
 
 @app.route('/')
 def main_page():
-    db_temp = sql.connect(db_path)
-    posts = execute_script(db_temp, sqlScripts['get_all_posts'], fetchall=True)
+    db_temp = get_db()
+    db = DataBase(db_temp)
+    posts = db.get_posts()
     return render_template('index.html', TITLE='Flask WebApp', menu=main_menu, posts=posts)
+
 
 @app.route('/feedback', methods = ['POST', 'GET'])
 def contact_page():
@@ -28,6 +30,7 @@ def contact_page():
             flash('Invalid login', category='error')
     return render_template('feedback.html', TITLE='Contact us', menu=main_menu)
 
+
 @app.route('/login', methods = ['POST', 'GET'])
 def login_page():
     if 'userLogged' in session:
@@ -38,46 +41,56 @@ def login_page():
             return redirect(url_for('profile', username=session['userLogged']))
     return render_template('login.html', TITLE='Sign in', menu=main_menu)
 
+
 @app.route('/profile/<username>')
 def profile(username):
     if session.get('userLogged') != username:
         abort(401)
     return f'profile page of {username}'
 
+
 @app.route('/add_post', methods = ['GET', 'POST'])
 def add_post():
-    db_temp = get_db(db_path)
+    db_temp = get_db()
+    db = DataBase(db_temp)
     if request.method == 'POST':
         if len(request.form['title']) > 2 and len(request.form['text']) > 10:
             title = request.form['title']
             text = request.form['text']
+            url = request.form['url']
             try:
-                id = execute_script(db_temp, sqlScripts['last_id'], fetchone=True)['id'] + 1
+                id = db.get_last_post()['id'] + 1
             except:
                 id = 0
-            time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            execute_script(db_temp, sqlScripts['add_post'], (id, title, text, time))
+            cur_time = time.time()
+            db.add_post(id, title, text, url, cur_time)
             flash(message='Thanks for your post!', category='success')
         else:
             flash(message='Invalid format of post', category='error')
     return render_template('add_post.html', TITLE='Add a post', menu=main_menu)
 
 
-@app.route('/post/id<int:post_id>')
-def post_page(post_id):
-    db_temp = get_db(db_path)
+@app.route('/post/<url>')
+def post_page(url):
+    db_temp = get_db()
+    db = DataBase(db_temp)
     try:
-        data = execute_script(db_temp, sqlScripts['get_post'], values=(post_id,), fetchone=True)
+        data = db.get_post_by_url(url)
         post_title = data['title']
         post_text = data['text']
-        return render_template('post.html', TITLE=f'Post {post_id}', menu=main_menu,
-                               post_title=post_title, post_text=post_text)
+        return render_template('post.html',
+                               TITLE=f'Post {post_title}',
+                               menu=main_menu,
+                               post_title=post_title,
+                               post_text=post_text)
     except:
         abort(404)
+
 
 @app.errorhandler(404)
 def page404(error):
     return render_template('error_page.html', TITLE=error, menu=main_menu), 404
+
 
 @app.teardown_appcontext
 def close_db(error):

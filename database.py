@@ -1,26 +1,50 @@
 import sqlite3 as sql
 from flask import g
-
-def get_db(db_path):
+from math import floor
+def get_db():
     if not hasattr(g, 'link_db'):
-        g.link_db = sql.connect(db_path)
+        g.link_db = sql.connect('flask.db')
     return g.link_db
+class DataBase:
+    def __init__(self, db):
+        self.db = db
+        self.db.row_factory = sql.Row
+        self.cur = db.cursor()
 
-sqlScripts = {
-    'last_id': 'SELECT * FROM posts WHERE id=(SELECT max(id) FROM posts)',
-    'add_post': 'INSERT INTO posts(id, title, text, time) VALUES(?, ?, ?, ?)',
-    'get_post': 'SELECT * FROM posts WHERE id = ?',
-    'get_all_posts': 'SELECT * FROM posts ORDER BY id DESC'
-}
-def execute_script(db, script, values = None, fetchone = False, fetchall = False):
-    db.row_factory = sql.Row
-    cur = db.cursor()
-    if values != None:
-        cur.execute(script, values)
-    else:
-        cur.execute(script)
-    if fetchone:
-        return cur.fetchone()
-    if fetchall:
-        return cur.fetchall()
-    db.commit()
+    def create_table(self):
+        self.cur.execute("""DROP TABLE posts""")
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS posts(id INT, 
+        title TEXT, 
+        text TEXT,
+        url TEXT, 
+        time INT
+        )""")
+
+        self.db.commit()
+
+    def get_posts(self):
+        self.cur.execute("""SELECT * FROM posts""")
+        return self.cur.fetchall()
+
+    def get_last_post(self):
+        self.cur.execute("""
+        SELECT * FROM posts WHERE id = (SELECT max(id) FROM posts)
+        """)
+        return self.cur.fetchone()
+
+    def add_post(self, id, title, text, url, cur_time):
+        self.cur.execute("""
+        INSERT INTO posts VALUES(?, ?, ?, ?, ?)
+        """, (id, title, text, url, floor(cur_time)))
+        self.db.commit()
+
+    def get_post(self, id):
+        self.cur.execute("""
+        SELECT * FROM posts WHERE id = ?
+        """, id)
+        return self.cur.fetchone()
+
+    def get_post_by_url(self, url):
+        self.cur.execute(f"""SELECT * FROM posts WHERE url LIKE '{url}' """)
+        return self.cur.fetchone()
