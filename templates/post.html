@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 {% block custom_content %}
-{{ post_title }}
-{{ post_text }}
+{{ post_title | safe }}
+{{ post_text | safe }}
 {% endblock %}

@@ -19,7 +19,7 @@
 <p><p>
 <div class="textblock">
     {% for post in posts %}
-    <a class='link' href="post/{{ post['url'] }}">{{ post['title'] }}</a>
+    <a class='link' href="post/{{ post['url'] }}">{{ post['title'] | striptags }}</a>
     {% endfor %}
 </div>
 {% endblock %}
